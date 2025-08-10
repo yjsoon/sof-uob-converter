@@ -82,13 +82,13 @@ def calculate_hash_total(header_record, detail_records):
         else:
             hash_code += 1
             
-        # Extract fields (0-based positions)
-        recv_bic = record[7:18]  # Position 8-18
-        recv_acc = record[18:52]  # Position 19-52 
-        recv_name = record[52:192]  # Position 53-192
-        currency = record[186:189]  # Position 187-189
-        amount = record[189:207]  # Position 190-207
-        purpose = record[277:281]  # Position 278-281
+        # Extract fields (0-based positions, spec uses 1-based)
+        recv_bic = record[1:12]      # Position 2-12 in spec
+        recv_acc = record[12:46]     # Position 13-46 in spec
+        recv_name = record[46:186]   # Position 47-186 in spec
+        currency = record[186:189]   # Position 187-189 in spec
+        amount = record[189:207]     # Position 190-207 in spec
+        purpose = record[277:281]    # Position 278-281 in spec
         
         # Calculate sums
         sum1 = compute_field_check_summary(recv_bic, 11)
