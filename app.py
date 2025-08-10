@@ -50,8 +50,10 @@ def create_header_record_custom(file_name, creation_date_long, value_date, org_n
 def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payment_desc, value_date_override=None):
     """Process Excel dataframe to UOB format with custom parameters"""
     
-    # Clean data - remove rows with NaN in critical columns
+    # Clean data - remove rows with NaN in critical columns and filter out total/summary rows
     df = df.dropna(subset=['Name of Recipient ', 'Bank Account Number ', 'Amount'])
+    # Also remove rows where 'No' is NaN (likely total rows)
+    df = df.dropna(subset=['No'])
     
     # Get dates
     if value_date_override:
@@ -230,17 +232,20 @@ with col2:
             </style>
             """, unsafe_allow_html=True)
             
+            # Filter out total/summary rows (rows with NaN in 'No' column)
+            df_clean = df.dropna(subset=['No', 'Name of Recipient ', 'Amount'])
+            
             with col2_1:
-                st.metric("Total Records", len(df.dropna(subset=['Amount'])))
+                st.metric("Total Records", len(df_clean))
             with col2_2:
-                total_amt = df['Amount'].sum()
+                total_amt = df_clean['Amount'].sum()
                 # Format large numbers more compactly
                 if total_amt >= 1000:
                     st.metric("Total Amount", f"SGD {total_amt/1000:.1f}K")
                 else:
                     st.metric("Total Amount", f"SGD {total_amt:,.2f}")
             with col2_3:
-                st.metric("Banks", df['Bank'].nunique())
+                st.metric("Banks", df_clean['Bank'].nunique())
             
             # Process button
             if st.button("🚀 Generate UOB File", type="primary", use_container_width=True):
