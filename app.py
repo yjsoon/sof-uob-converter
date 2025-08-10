@@ -265,6 +265,15 @@ with col2:
                         # Success message
                         st.success("✅ File generated successfully!")
                         
+                        # Add custom CSS for smaller result metrics
+                        st.markdown("""
+                        <style>
+                        [data-testid="column"] [data-testid="metric-container"] [data-testid="stMetricValue"] {
+                            font-size: 1.5rem !important;
+                        }
+                        </style>
+                        """, unsafe_allow_html=True)
+                        
                         # Show results
                         result_col1, result_col2, result_col3 = st.columns(3)
                         with result_col1:
