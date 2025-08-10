@@ -177,45 +177,18 @@ The script automatically:
 
 ## Deployment
 
-### Deploy to Streamlit Community Cloud (Recommended - FREE)
+### Deploy to Streamlit Community Cloud (FREE)
 
-1. **Fork or push this repository** to your GitHub account
+1. **Sign up** at [share.streamlit.io](https://share.streamlit.io) using your GitHub account
 
-2. **Sign up** at [share.streamlit.io](https://share.streamlit.io) using your GitHub account
-
-3. **Deploy the app**:
+2. **Deploy the app**:
    - Click "New app"
    - Select your repository: `yourusername/sof-uob-converter`
    - Branch: `main`
    - Main file path: `app.py`
    - Click "Deploy"
 
-4. **Your app will be available at**: `https://yourusername-sof-uob-converter.streamlit.app`
-
-### Alternative Deployment Options
-
-#### Netlify (with Streamlit)
-While Netlify doesn't natively support Python apps, you can use it with Streamlit via GitHub Actions:
-1. Set up GitHub Actions to build and deploy
-2. Use Streamlit's static export feature
-3. More complex setup required
-
-#### Vercel
-Similar limitations as Netlify - requires serverless function setup for Python.
-
-#### Other Free Options
-- **Render.com**: Free tier with 750 hours/month
-- **Railway.app**: $5 credit/month free tier
-- **Fly.io**: Free tier with 3 shared VMs
-- **Hugging Face Spaces**: Free Streamlit hosting
-
-### Why Streamlit Community Cloud?
-- ✅ **100% Free** - No credit card required
-- ✅ **Easy deployment** - Just connect GitHub
-- ✅ **Auto-redeploy** - Updates when you push to GitHub
-- ✅ **Custom domain** support
-- ✅ **No time limits** or usage restrictions
-- ✅ **Built for Streamlit** apps specifically
+3. **Your app will be available at**: `https://yourusername-sof-uob-converter.streamlit.app`
 
 ## Development
 
