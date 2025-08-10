@@ -156,12 +156,12 @@ with col1:
             help="Description that appears on receipts (max 140 characters)"
         )
         
-        # Date override option
-        use_custom_date = st.checkbox("Use custom value date")
-        if use_custom_date:
-            custom_date = st.date_input("Value Date", datetime.now())
-        else:
-            custom_date = None
+        # Value date selection
+        value_date = st.date_input(
+            "Value Date",
+            datetime.now(),
+            help="The date when the payment should be processed"
+        )
         
         form_submitted = st.form_submit_button("Apply Settings", type="primary")
 
@@ -230,7 +230,7 @@ with col2:
                             org_bic, 
                             customer_ref, 
                             payment_desc,
-                            datetime.combine(custom_date, datetime.min.time()) if custom_date else None
+                            datetime.combine(value_date, datetime.min.time())
                         )
                         
                         # Success message
