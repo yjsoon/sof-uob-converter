@@ -120,21 +120,21 @@ st.markdown("Convert Excel files to UOB bulk payment format (v4.8 specification)
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.header("📋 Organization Details")
+    st.header("📋 Organisation Details")
     
     with st.form("org_details"):
         org_name = st.text_input(
-            "Organization Name",
+            "Organisation Name",
             value="SINGAPORE OLYMPIC FOUNDATION",
             max_chars=140,
-            help="Name of the originating organization (max 140 characters)"
+            help="Name of the originating organisation (max 140 characters)"
         )
         
         org_account = st.text_input(
             "Originating Account Number",
             value="3663050778",
             max_chars=34,
-            help="Your organization's bank account number (max 34 characters)"
+            help="Your organisation's bank account number (max 34 characters)"
         )
         
         org_bic = st.text_input(
@@ -307,7 +307,7 @@ st.markdown("""
 with st.sidebar:
     st.header("📖 How to Use")
     st.markdown("""
-    1. **Fill in your organization details** in the form
+    1. **Fill in your organisation details** in the form
     2. **Upload your Excel file** with payment data
     3. **Review the preview** to ensure data is correct
     4. **Click Generate** to create the UOB file
