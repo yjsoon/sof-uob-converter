@@ -313,11 +313,4 @@ with st.sidebar:
     ### 🔒 Security Note
     All processing happens in your browser session. 
     No data is stored on the server.
-    
-    ---
-    
-    ### ⚠️ Important
-    - Never commit files with real bank data to git
-    - Always verify the output before submission
-    - Keep payment files secure
     """)
