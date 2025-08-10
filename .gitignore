@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Virtual environments
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project specific - IMPORTANT: Protect sensitive data
+# Exclude ALL input files (contains real bank account info)
+inputs/
+!inputs/.gitkeep
+!inputs/template.xlsx
+
+# Exclude ALL output files (contains real bank account info) 
+outputs/
+!outputs/.gitkeep
+*.TXT
+*.txt
+UGAI*.txt
+UGAO*.txt
+UGBI*.txt
+UGBO*.txt
+
+# Exclude sensitive docs
+docs/expected_output.TXT
+docs/my_sample.xlsx
+docs/*.xlsm
+# Keep only the specification PDF
+!docs/Format Specification Guide Bulk FAST_GIRO Format Specification v4.8.pdf
+!docs/ParameterTable.xlsx
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Sensitive data
+config.ini
+credentials.json
+*.key
+*.pem
