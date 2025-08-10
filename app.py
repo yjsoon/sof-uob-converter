@@ -209,12 +209,36 @@ with col2:
                     preview_df['Email'] = preview_df['Email'].str.replace(r'(.{3}).*(@.*)', r'\1***\2', regex=True)
                 st.dataframe(preview_df)
             
-            # Show statistics
+            # Show statistics with custom styling
             col2_1, col2_2, col2_3 = st.columns(3)
+            
+            # Add custom CSS for smaller metric text
+            st.markdown("""
+            <style>
+            [data-testid="metric-container"] {
+                margin: -5px 0;
+            }
+            [data-testid="metric-container"] > div {
+                padding: 5px 10px;
+            }
+            [data-testid="metric-container"] [data-testid="stMetricValue"] {
+                font-size: 1.8rem;
+            }
+            [data-testid="metric-container"] [data-testid="stMetricLabel"] {
+                font-size: 0.9rem;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
             with col2_1:
                 st.metric("Total Records", len(df.dropna(subset=['Amount'])))
             with col2_2:
-                st.metric("Total Amount", f"SGD {df['Amount'].sum():,.2f}")
+                total_amt = df['Amount'].sum()
+                # Format large numbers more compactly
+                if total_amt >= 1000:
+                    st.metric("Total Amount", f"SGD {total_amt/1000:.1f}K")
+                else:
+                    st.metric("Total Amount", f"SGD {total_amt:,.2f}")
             with col2_3:
                 st.metric("Banks", df['Bank'].nunique())
             
