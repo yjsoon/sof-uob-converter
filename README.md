@@ -2,6 +2,8 @@
 
 A Python utility to convert Excel spreadsheets containing scholarship recipient data into UOB FAST/GIRO bulk payment format for the Singapore Olympic Foundation (SOF).
 
+🌐 **[Try the Web App](#web-application)** | 💻 **[Use CLI](#command-line-usage)** | 🚀 **[Deploy Your Own](#deployment)**
+
 ## Overview
 
 This tool transforms Excel files with scholarship recipient information into the specific TXT format required by UOB's bulk payment system, following the UOB FAST/GIRO Format Specification v4.8.
@@ -42,7 +44,34 @@ pip install pandas openpyxl
 - Use `inputs/template.xlsx` as a reference for the required Excel format
 - Keep all real data files in the `inputs/` folder only
 
-## Usage
+## Web Application
+
+### 🌐 Quick Start (Hosted Version)
+
+Visit the deployed web app at: *[To be deployed on Streamlit Community Cloud]*
+
+### 💻 Run Locally
+
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Run the Streamlit app:
+```bash
+streamlit run app.py
+```
+
+3. Open your browser to `http://localhost:8501`
+
+### Features
+- User-friendly web interface
+- Customizable organization details
+- Excel file upload with preview
+- Instant conversion and download
+- No data stored on server
+
+## Command Line Usage
 
 Basic usage:
 ```bash
@@ -145,6 +174,48 @@ The script automatically:
 - Removes rows with missing critical data
 - Calculates hash totals for integrity
 - Reports total amount and record count
+
+## Deployment
+
+### Deploy to Streamlit Community Cloud (Recommended - FREE)
+
+1. **Fork or push this repository** to your GitHub account
+
+2. **Sign up** at [share.streamlit.io](https://share.streamlit.io) using your GitHub account
+
+3. **Deploy the app**:
+   - Click "New app"
+   - Select your repository: `yourusername/sof-uob-converter`
+   - Branch: `main`
+   - Main file path: `app.py`
+   - Click "Deploy"
+
+4. **Your app will be available at**: `https://yourusername-sof-uob-converter.streamlit.app`
+
+### Alternative Deployment Options
+
+#### Netlify (with Streamlit)
+While Netlify doesn't natively support Python apps, you can use it with Streamlit via GitHub Actions:
+1. Set up GitHub Actions to build and deploy
+2. Use Streamlit's static export feature
+3. More complex setup required
+
+#### Vercel
+Similar limitations as Netlify - requires serverless function setup for Python.
+
+#### Other Free Options
+- **Render.com**: Free tier with 750 hours/month
+- **Railway.app**: $5 credit/month free tier
+- **Fly.io**: Free tier with 3 shared VMs
+- **Hugging Face Spaces**: Free Streamlit hosting
+
+### Why Streamlit Community Cloud?
+- ✅ **100% Free** - No credit card required
+- ✅ **Easy deployment** - Just connect GitHub
+- ✅ **Auto-redeploy** - Updates when you push to GitHub
+- ✅ **Custom domain** support
+- ✅ **No time limits** or usage restrictions
+- ✅ **Built for Streamlit** apps specifically
 
 ## Development
 

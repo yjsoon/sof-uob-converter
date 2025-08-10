@@ -32,6 +32,7 @@ outputs/
 !outputs/.gitkeep
 *.TXT
 *.txt
+!requirements.txt
 UGAI*.txt
 UGAO*.txt
 UGBI*.txt
