@@ -221,8 +221,8 @@ with col2:
     
     if uploaded_file is not None:
         try:
-            # Read the Excel file
-            df = pd.read_excel(uploaded_file)
+            # Read the Excel file - ensure Bank Account Number is read as string to preserve leading zeros
+            df = pd.read_excel(uploaded_file, dtype={'Bank Account Number ': str})
             
             # Show preview
             st.success(f"✅ File uploaded successfully: {uploaded_file.name}")

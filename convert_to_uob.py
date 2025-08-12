@@ -231,8 +231,8 @@ def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
     Args:
         processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
     """
-    # Read Excel file
-    df = pd.read_excel(input_file)
+    # Read Excel file - ensure Bank Account Number is read as string to preserve leading zeros
+    df = pd.read_excel(input_file, dtype={'Bank Account Number ': str})
     
     # Clean data - remove rows with NaN in critical columns
     df = df.dropna(subset=['Name of Recipient ', 'Bank Account Number ', 'Amount'])
