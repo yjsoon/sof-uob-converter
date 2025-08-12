@@ -19,7 +19,8 @@ BANK_MAPPING = {
     'Citibank - 7214': 'CITISGSGXXX',
     'Maybank - 7302': 'MBBESGSGXXX',
     'Maybank Singapore Limited - 7302': 'MBBESGSGXXX',
-    'Bank of China - 7366': 'BKCHSGSGXXX'
+    'Bank of China - 7366': 'BKCHSGSGXXX',
+    'Trust Bank Singapore Limited': 'TRBUSGSGXXX'
 }
 
 def pad_right(text, length):
