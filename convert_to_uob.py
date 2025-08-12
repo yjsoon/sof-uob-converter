@@ -47,8 +47,14 @@ def compute_field_check_summary(field_value, hash_index):
         total += (i + 1) * ascii_val
     return total
 
-def calculate_hash_total(header_record, detail_records):
-    """Calculate hash total according to Appendix 4 of the specification"""
+def calculate_hash_total(header_record, detail_records, addon_records):
+    """Calculate hash total according to Appendix 4 of the specification
+    
+    Args:
+        header_record: Type 1 header record
+        detail_records: List of Type 2 detail records
+        addon_records: List of Type 4 addon records
+    """
     
     # Extract header fields for hash calculation
     # Positions are 0-based in Python (spec uses 1-based)
@@ -185,6 +191,29 @@ def create_detail_record(row, seq_num):
     
     return record[:1055]  # Ensure exactly 1055 chars
 
+def create_addon_record(row, line_number='01'):
+    """Create Type 4 - Payment Advice Add-on Detail Record (1055 chars)
+    
+    This record contains the payment advice text that appears on the beneficiary's statement.
+    """
+    record = ''
+    
+    # Record Type and Line Number
+    record += '4'                                          # 1: Record Type
+    record += line_number                                  # 2-3: Line Number (01 for first line)
+    
+    # Format the payment advice text with description and amount
+    description = str(row.get('Description', 'SOFPLS SCHOLARSHIP'))
+    amount = float(row['Amount'])
+    
+    # Create the advice text in the format shown in the 2024 file
+    advice_text = f"{description}: SGD{amount:,.2f}"
+    
+    # Pad the advice text to fill the rest of the record
+    record += pad_right(advice_text, 1052)                 # 4-1055: Advice Text (1052 chars)
+    
+    return record[:1055]  # Ensure exactly 1055 chars
+
 def create_trailer_record(total_amount, total_count, hash_total):
     """Create Type 9 - Batch Trailer Record (1055 chars)"""
     record = ''
@@ -225,16 +254,22 @@ def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
     header_record = create_header_record(file_name, creation_date_long, value_date, processing_mode)
     
     detail_records = []
+    addon_records = []
     total_amount = 0
     
     for idx, row in df.iterrows():
         seq_num = idx + 1
         detail_record = create_detail_record(row, seq_num)
         detail_records.append(detail_record)
+        
+        # Create Type 4 addon record for payment advice
+        addon_record = create_addon_record(row)
+        addon_records.append(addon_record)
+        
         total_amount += float(row['Amount'])
     
     # Calculate hash total
-    hash_total = calculate_hash_total(header_record, detail_records)
+    hash_total = calculate_hash_total(header_record, detail_records, addon_records)
     
     # Create trailer record
     trailer_record = create_trailer_record(total_amount, len(detail_records), hash_total)
@@ -244,9 +279,10 @@ def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
         # Write header
         f.write((header_record + '\r\n').encode('ascii'))
         
-        # Write detail records
-        for record in detail_records:
-            f.write((record + '\r\n').encode('ascii'))
+        # Write detail records with their addon records
+        for detail_record, addon_record in zip(detail_records, addon_records):
+            f.write((detail_record + '\r\n').encode('ascii'))
+            f.write((addon_record + '\r\n').encode('ascii'))
         
         # Write trailer
         f.write((trailer_record + '\r\n').encode('ascii'))

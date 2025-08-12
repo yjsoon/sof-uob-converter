@@ -18,6 +18,7 @@ from convert_to_uob import (
     compute_field_check_summary,
     calculate_hash_total,
     create_detail_record,
+    create_addon_record,
     create_trailer_record
 )
 
@@ -83,6 +84,7 @@ def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payme
     )
     
     detail_records = []
+    addon_records = []
     total_amount = 0
     
     for idx, row in df.iterrows():
@@ -94,10 +96,15 @@ def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payme
         # Replace the hardcoded "SOFPLS SCHOLARSHIP" with custom description
         detail_record = detail_record[:281] + pad_right(payment_desc, 140) + detail_record[421:]
         detail_records.append(detail_record)
+        
+        # Create Type 4 addon record for payment advice
+        addon_record = create_addon_record(row_copy)
+        addon_records.append(addon_record)
+        
         total_amount += float(row['Amount'])
     
     # Calculate hash total
-    hash_total = calculate_hash_total(header_record, detail_records)
+    hash_total = calculate_hash_total(header_record, detail_records, addon_records)
     
     # Create trailer record
     trailer_record = create_trailer_record(total_amount, len(detail_records), hash_total)
@@ -105,8 +112,9 @@ def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payme
     # Build output content
     output_lines = []
     output_lines.append(header_record + '\r\n')
-    for record in detail_records:
-        output_lines.append(record + '\r\n')
+    for detail_record, addon_record in zip(detail_records, addon_records):
+        output_lines.append(detail_record + '\r\n')
+        output_lines.append(addon_record + '\r\n')
     output_lines.append(trailer_record + '\r\n')
     
     # Join all lines
