@@ -226,11 +226,12 @@ def create_trailer_record(total_amount, total_count, hash_total):
     
     return record[:1055]  # Ensure exactly 1055 chars
 
-def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
+def convert_excel_to_uob(input_file, output_file, processing_mode='B', value_date_str=None):
     """Main conversion function
     
     Args:
         processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
+        value_date_str: Value date in YYYY-MM-DD format (optional, defaults to today)
     """
     # Read Excel file - ensure Bank Account Number is read as string to preserve leading zeros
     df = pd.read_excel(input_file, dtype={'Bank Account Number ': str})
@@ -240,8 +241,14 @@ def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
     
     # Get dates
     today = datetime.now()
-    creation_date_long = today.strftime('%Y%m%d')  # YYYYMMDD
-    value_date = creation_date_long  # Same as creation date
+    creation_date_long = today.strftime('%Y%m%d')  # YYYYMMDD - always today
+    
+    # Value date can be specified or defaults to today
+    if value_date_str:
+        value_date_obj = datetime.strptime(value_date_str, '%Y-%m-%d')
+        value_date = value_date_obj.strftime('%Y%m%d')
+    else:
+        value_date = creation_date_long  # Same as creation date
     
     # Generate filename in UGAIddmmNN.txt format
     ddmm = today.strftime('%d%m')
@@ -309,11 +316,13 @@ def main():
                        default='output.TXT')
     parser.add_argument('-m', '--mode', help='Processing mode: B for Normal GIRO (default), I for FAST GIRO',
                        choices=['B', 'I'], default='B')
+    parser.add_argument('-d', '--value-date', help='Value date in YYYY-MM-DD format (defaults to today)',
+                       type=str, default=None)
     
     args = parser.parse_args()
     
     try:
-        convert_excel_to_uob(args.input, args.output, args.mode)
+        convert_excel_to_uob(args.input, args.output, args.mode, args.value_date)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

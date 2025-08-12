@@ -65,16 +65,18 @@ def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payme
     df = df.dropna(subset=['No'])
     
     # Get dates
+    # Creation date is always today
+    today = datetime.now()
+    creation_date_long = today.strftime('%Y%m%d')
+    
+    # Value date is what the user specifies (or today if not specified)
     if value_date_override:
-        specific_date = value_date_override
+        value_date = value_date_override.strftime('%Y%m%d')
     else:
-        specific_date = datetime.now()
+        value_date = creation_date_long
     
-    creation_date_long = specific_date.strftime('%Y%m%d')
-    value_date = creation_date_long
-    
-    # Generate filename in UGAIddmmNN.txt format
-    ddmm = specific_date.strftime('%d%m')
+    # Generate filename in UGAIddmmNN.txt format using today's date
+    ddmm = today.strftime('%d%m')
     file_name = f'UGAI{ddmm}00'
     
     # Build records
@@ -187,7 +189,8 @@ with col1:
         value_date = st.date_input(
             "Value Date",
             datetime.now(),
-            help="The date when the payment should be processed"
+            min_value=datetime.now().date(),
+            help="The date when the payment should be processed (cannot be in the past)"
         )
         
         form_submitted = st.form_submit_button("Apply Settings", type="primary")
