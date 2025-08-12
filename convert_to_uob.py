@@ -107,8 +107,12 @@ def calculate_hash_total(header_record, detail_records):
     # Return as 16-digit string
     return str(final_check_sum)[-16:].zfill(16)
 
-def create_header_record(file_name, creation_date_long, value_date):
-    """Create Type 1 - Batch Header Record (1055 chars for Payment Advice)"""
+def create_header_record(file_name, creation_date_long, value_date, processing_mode='B'):
+    """Create Type 1 - Batch Header Record (1055 chars for Payment Advice)
+    
+    Args:
+        processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
+    """
     record = ''
     
     # Build header according to exact spec positions
@@ -116,7 +120,7 @@ def create_header_record(file_name, creation_date_long, value_date):
     record += pad_right(file_name[:10], 10)                # 2-11: File Name (10 chars, not 14!)
     record += 'P'                                          # 12: Payment Type (P for Payment)
     record += pad_right('NORMAL', 10)                      # 13-22: Service Type (10 chars)
-    record += 'I'                                          # 23: Processing Mode (I for FAST)
+    record += processing_mode                              # 23: Processing Mode (B for Normal, I for FAST)
     record += pad_right('', 12)                            # 24-35: Company ID (12 chars) - conditional
     record += pad_right('UOVBSGSGXXX', 11)                # 36-46: Originating BIC (11 chars)
     record += 'SGD'                                        # 47-49: Currency (3 chars)
@@ -192,8 +196,12 @@ def create_trailer_record(total_amount, total_count, hash_total):
     
     return record[:1055]  # Ensure exactly 1055 chars
 
-def convert_excel_to_uob(input_file, output_file):
-    """Main conversion function"""
+def convert_excel_to_uob(input_file, output_file, processing_mode='B'):
+    """Main conversion function
+    
+    Args:
+        processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
+    """
     # Read Excel file
     df = pd.read_excel(input_file)
     
@@ -214,7 +222,7 @@ def convert_excel_to_uob(input_file, output_file):
         output_file = f'{file_name}.txt'
     
     # Build records
-    header_record = create_header_record(file_name, creation_date_long, value_date)
+    header_record = create_header_record(file_name, creation_date_long, value_date, processing_mode)
     
     detail_records = []
     total_amount = 0
@@ -262,11 +270,13 @@ def main():
     parser.add_argument('input', help='Input Excel file path')
     parser.add_argument('-o', '--output', help='Output TXT file path', 
                        default='output.TXT')
+    parser.add_argument('-m', '--mode', help='Processing mode: B for Normal GIRO (default), I for FAST GIRO',
+                       choices=['B', 'I'], default='B')
     
     args = parser.parse_args()
     
     try:
-        convert_excel_to_uob(args.input, args.output)
+        convert_excel_to_uob(args.input, args.output, args.mode)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

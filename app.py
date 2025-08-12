@@ -21,8 +21,12 @@ from convert_to_uob import (
     create_trailer_record
 )
 
-def create_header_record_custom(file_name, creation_date_long, value_date, org_name, org_account, org_bic, customer_ref):
-    """Create Type 1 - Batch Header Record with custom organization details"""
+def create_header_record_custom(file_name, creation_date_long, value_date, org_name, org_account, org_bic, customer_ref, processing_mode='B'):
+    """Create Type 1 - Batch Header Record with custom organization details
+    
+    Args:
+        processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
+    """
     record = ''
     
     # Build header according to exact spec positions
@@ -30,7 +34,7 @@ def create_header_record_custom(file_name, creation_date_long, value_date, org_n
     record += pad_right(file_name[:10], 10)                # 2-11: File Name (10 chars)
     record += 'P'                                          # 12: Payment Type (P for Payment)
     record += pad_right('NORMAL', 10)                      # 13-22: Service Type (10 chars)
-    record += 'I'                                          # 23: Processing Mode (I for FAST)
+    record += processing_mode                              # 23: Processing Mode (B for Normal, I for FAST)
     record += pad_right('', 12)                            # 24-35: Company ID (12 chars) - conditional
     record += pad_right(org_bic, 11)                       # 36-46: Originating BIC (11 chars)
     record += 'SGD'                                        # 47-49: Currency (3 chars)
@@ -47,8 +51,12 @@ def create_header_record_custom(file_name, creation_date_long, value_date, org_n
     
     return record[:1055]  # Ensure exactly 1055 chars
 
-def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payment_desc, value_date_override=None):
-    """Process Excel dataframe to UOB format with custom parameters"""
+def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payment_desc, processing_mode='B', value_date_override=None):
+    """Process Excel dataframe to UOB format with custom parameters
+    
+    Args:
+        processing_mode: 'B' for Normal GIRO (default), 'I' for FAST GIRO
+    """
     
     # Clean data - remove rows with NaN in critical columns and filter out total/summary rows
     df = df.dropna(subset=['Name of Recipient ', 'Bank Account Number ', 'Amount'])
@@ -71,7 +79,7 @@ def process_excel_to_uob(df, org_name, org_account, org_bic, customer_ref, payme
     # Build records
     header_record = create_header_record_custom(
         file_name, creation_date_long, value_date,
-        org_name, org_account, org_bic, customer_ref
+        org_name, org_account, org_bic, customer_ref, processing_mode
     )
     
     detail_records = []
@@ -156,6 +164,15 @@ with col1:
             value="SOFPLS SCHOLARSHIP",
             max_chars=140,
             help="Description that appears on receipts (max 140 characters)"
+        )
+        
+        # Processing mode selection
+        processing_mode = st.selectbox(
+            "Processing Mode",
+            options=['B', 'I'],
+            format_func=lambda x: "Normal GIRO (Standard charges)" if x == 'B' else "FAST GIRO (Higher charges, faster processing)",
+            index=0,  # Default to 'B' (Normal GIRO)
+            help="Select the processing mode for payments"
         )
         
         # Value date selection
@@ -259,6 +276,7 @@ with col2:
                             org_bic, 
                             customer_ref, 
                             payment_desc,
+                            processing_mode,
                             datetime.combine(value_date, datetime.min.time())
                         )
                         
